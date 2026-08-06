@@ -39,6 +39,7 @@ PARAM_NAMES = list(PARAM_BOUNDS)
 
 DT = 0.003
 MAX_LAP_TIME = 90.0
+REGEN_EFFICIENCY = 0.8   # fraction of regen power recovered to the battery
 CRASH_DEV = TRACK_WIDTH / 2.0 + 1.0   # 2.5 m off center line = off-track
 CRASH_YAW = 3.0                       # rad/s spin-out threshold
 FINISH_MARGIN = 1.0                   # m from the path end = lap complete
@@ -57,7 +58,7 @@ def get_track():
 # --------------------------------------------------------------------------
 # Sampling
 # --------------------------------------------------------------------------
-def generate_lhs_samples(n_samples=50000, seed=42):
+def generate_lhs_samples(n_samples, seed=42):
     """Latin Hypercube samples over the 6 VDC parameters (numpy-only).
 
     Each parameter dimension is stratified into ``n_samples`` bins and one
@@ -117,7 +118,7 @@ def grip_scaling(scale):
 # Lap simulation
 # --------------------------------------------------------------------------
 def run_lap(params_dict, grip_scale=1.0, driver_noise=0.0, driver_seed=None,
-            warmup_laps=0, dt=DT, max_time=MAX_LAP_TIME):
+            warmup_laps=0, dt=DT, max_time=MAX_LAP_TIME, track=None):
     """Run one scored lap with the given VDC parameters.
 
     Args:
@@ -130,11 +131,13 @@ def run_lap(params_dict, grip_scale=1.0, driver_noise=0.0, driver_seed=None,
             identical until a thermal model exists).
         dt (float): integration step [s].
         max_time (float): safety ceiling [s].
+        track (Track | None): track to drive; None = default autocross
+            track (used by the endurance module for its own circuit).
 
     Returns:
         dict: lap metrics (see :func:`run_batch` for the CSV schema).
     """
-    track = get_track()
+    track = track if track is not None else get_track()
     vp = KIT25E_PARAMS
     vdc = VDCController(vp, VDCParams(**params_dict))
     driver = PurePursuitDriver(track)
@@ -147,7 +150,8 @@ def run_lap(params_dict, grip_scale=1.0, driver_noise=0.0, driver_seed=None,
                              y=float(track.path_y[0]),
                              heading=_start_heading(track))
         yaw_sq, yaw_n = 0.0, 0
-        peak_slip, energy, max_dev, max_prog = 0.0, 0.0, 0.0, 0.0
+        peak_slip, energy, net_energy = 0.0, 0.0, 0.0
+        max_dev, max_prog = 0.0, 0.0
         t = 0.0
         crashed = completed = False
         for i in range(int(max_time / dt)):
@@ -170,7 +174,11 @@ def run_lap(params_dict, grip_scale=1.0, driver_noise=0.0, driver_seed=None,
             yaw_sq += e_r * e_r
             yaw_n += 1
             omega = state.vx / vp.tire_rolling_radius
-            energy += float(np.sum(np.abs(T_motor) * abs(omega))) * dt
+            pow_abs = np.abs(T_motor) * abs(omega)
+            energy += float(np.sum(pow_abs)) * dt
+            gross = float(np.sum(np.clip(T_motor, 0.0, None) * abs(omega))) * dt
+            regen = float(np.sum(np.clip(-T_motor, 0.0, None) * abs(omega))) * dt
+            net_energy += gross - REGEN_EFFICIENCY * regen
             if i % 20 == 0:  # slip metric at reduced rate (cheaper)
                 _, Fz = compute_slip_angles(state, vp, steer)
                 for j in range(4):
@@ -190,6 +198,7 @@ def run_lap(params_dict, grip_scale=1.0, driver_noise=0.0, driver_seed=None,
             completed=int(completed), crashed=int(crashed),
             yaw_error_rms=float(np.sqrt(yaw_sq / max(yaw_n, 1))),
             peak_slip=float(peak_slip), energy_used=float(energy),
+            net_energy_used=float(net_energy),
             max_deviation=float(max_dev),
         ), completed, crashed
 
