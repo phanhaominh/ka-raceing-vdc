@@ -32,10 +32,7 @@ import numpy as np
 # Module-level paths / state
 # --------------------------------------------------------------------------
 _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TIR_PATH = os.path.join(
-    _PROJECT_ROOT, "private", "tire_models", "hoosier_r20_public_mf50.tir"
-)
-RESULTS_DIR = os.path.join(_PROJECT_ROOT, "results", "validation")
+TIR_PATH = os.path.join(_PROJECT_ROOT, "models", "hoosier_r20.tir")
 
 _coeffs = None  # lazy-loaded coefficient dict (see _load_coeffs)
 
