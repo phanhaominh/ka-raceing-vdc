@@ -89,3 +89,9 @@ Experiments were performed on a shared academic HPC cluster using 792 CPU cores 
 The current study uses publicly available KIT25e specifications, MF5.0 Hoosier R20 tire data, estimated aerodynamic parameters, and a representative autocross simulation. No KA-RaceIng telemetry or internal vehicle data were used.
 
 With team-specific data, this framework can be extended for vehicle-specific calibration and validation.
+
+## Endurance Validation
+
+An 11-lap, 24.9 km endurance simulation with tire degradation (grip 1.0→0.82) and battery state-of-charge tracking was run to evaluate whether TC parameters become influential over longer distances. The autocross calibration (tc_slip_target=0.12) and an endurance-tuned calibration (tc_slip_target=0.16) produced identical results — TC never engaged in either case. Peak longitudinal slip reached 0.076 on degraded tires, below the 0.12 threshold.
+
+This confirms that the KIT25e's 4WD system with Hoosier R20 slicks provides sufficient mechanical grip that traction control is unnecessary for autocross and endurance events on the simulated track. Tuning effort should focus exclusively on the yaw controller.

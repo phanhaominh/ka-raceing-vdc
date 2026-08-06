@@ -107,6 +107,7 @@ Three independent statistical methods confirm the same result:
 3. **Pearson correlation**: consistent ranking across all three performance metrics
 
 ## Current Limitations
+- Endurance testing (24.9 km with tire degradation) confirmed TC parameters remain inert — the 4WD system with R20 slicks provides sufficient mechanical grip
 
 - Vehicle model uses publicly available specifications — no team telemetry
 - Tire model is based on available MF5.0 R20 data, not TTC Round 9 measurements
@@ -141,6 +142,7 @@ With access to team-specific data, this framework can be extended to:
 - [Surrogate Model Details](docs/SURROGATE_MODELS.md)
 - [VDC Calibration Recommendation](docs/RECOMMENDATION.md)
 - [CFD Pipeline](cfd/)
+- [Endurance Simulation](src/sweeps/endurance.py) — 22km multi-lap with tire degradation
 
 ---
 
