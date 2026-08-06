@@ -43,3 +43,18 @@ The simulated VDC parameter space shows strong statistical decoupling under the 
 - Longitudinal VDC parameters showed lower sensitivity in this scenario
 
 These results indicate where future calibration effort may be concentrated, rather than representing direct deployment recommendations without vehicle validation. The strong decoupling between yaw_gain (tracking) and yaw_damping (lap time) suggests these parameters can be tuned largely independently within the evaluated ranges.
+
+## Total-Effect Indices (200K samples)
+
+Total-effect Sobol indices (ST) capture both first-order effects and parameter interactions. Computed on the full Stage 2 dataset.
+
+| Parameter | ST | First-Order S1 | Interaction (ST-S1) |
+|-----------|-----|----------------|---------------------|
+| yaw_damping | 0.933 | 0.926 | +0.007 |
+| yaw_gain | 0.027 | 0.024 | +0.003 |
+| tc_slip_target | ~0.000 | 0.0001 | ~0.000 |
+| tc_aggressiveness | ~0.000 | 0.0001 | ~0.000 |
+| regen_ratio | ~0.000 | 0.0003 | ~0.000 |
+| brake_bias_front | ~0.000 | 0.0001 | ~0.000 |
+
+The near-zero difference between ST and S1 confirms that VDC parameter interactions are negligible. Parameters can be tuned independently.
