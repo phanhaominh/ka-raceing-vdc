@@ -5,7 +5,7 @@ combined-slip force generation for the Hoosier 16.0x7.5-10 R20 tire used on
 the KA-RaceIng KIT25e Formula Student car.
 
 Coefficients are parsed at runtime from the TNO MF5.0 property file
-``private/tire_models/hoosier_r20_public_mf50.tir`` (``PROPERTY_FILE_FORMAT =
+``models/hoosier_r20.tir`` (``PROPERTY_FILE_FORMAT =
 'MF_05'``, ``TYRESIDE = 'LEFT'``, ``FNOMIN = 1000.0 N``, ``LFZO = 0.8``).
 
 Conventions
