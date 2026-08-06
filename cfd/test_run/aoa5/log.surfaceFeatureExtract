@@ -1,0 +1,90 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2512                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _87ed40d2-20251219 OPENFOAM=2512 version=2512
+Arch   : "LSB;label=32;scalar=64"
+Exec   : surfaceFeatureExtract
+Date   : Aug 06 2026
+Time   : 00:49:38
+Host   : an01
+PID    : 1343077
+I/O    : uncollated
+Case   : /gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+memory pool : not available
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+
+Note: Feature line extraction only valid on closed manifold surfaces
+
+Reading surfaceFeatureExtractDict
+
+Surfaces     : aerofoil.stl
+Output       : aerofoil
+Load options : offset
+Write options: writeObj=yes writeVTK=off
+
+Statistics:
+Triangles    : 512 in 1 region(s)
+Vertices     : 512
+Bounding Box : (0 -1 -0.0594726502895355) (1.00000011920929 0 0.0594726502895355)
+
+Constructing feature set from included angle 120
+Selecting edges based purely on geometric tests: yes
+
+Initial Feature set:
+    points : 2
+    edges  : 513
+    of which
+        region edges   : 512
+        external edges : 0
+        internal edges : 1
+
+Final Feature set:
+    points : 512
+    of which
+        convex             : 0
+        concave            : 0
+        mixed              : 2
+        non-feature        : 510
+    edges  : 513
+    of which
+        external edges     : 0
+        internal edges     : 1
+        flat edges         : 0
+        open edges         : 512
+        multiply connected : 0
+
+Writing extendedFeatureEdgeMesh to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/extendedFeatureEdgeMesh/aerofoil.extendedFeatureEdgeMesh"
+
+Writing extendedEdgeMesh components to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/extendedFeatureEdgeMesh/aerofoil"
+Writing 0 convex feature points to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/extendedFeatureEdgeMesh/aerofoil_convexFeaturePts.obj"
+Writing 0 concave feature points to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/extendedFeatureEdgeMesh/aerofoil_concaveFeaturePts.obj"
+Writing 2 mixed feature points to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/extendedFeatureEdgeMesh/aerofoil_mixedFeaturePts.obj"
+Writing 2 mixed feature point structure to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/extendedFeatureEdgeMesh/aerofoil_mixedFeaturePtsStructure.obj"
+Writing 0 external edges to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/extendedFeatureEdgeMesh/aerofoil_externalEdges.obj"
+Writing 1 internal edges to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/extendedFeatureEdgeMesh/aerofoil_internalEdges.obj"
+Writing 0 flat edges to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/extendedFeatureEdgeMesh/aerofoil_flatEdges.obj"
+Writing 512 open edges to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/extendedFeatureEdgeMesh/aerofoil_openEdges.obj"
+Writing 0 multiple edges to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/extendedFeatureEdgeMesh/aerofoil_multipleEdges.obj"
+Writing 512 region edges to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/extendedFeatureEdgeMesh/aerofoil_regionEdges.obj"
+Writing 513 edge directions to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/extendedFeatureEdgeMesh/aerofoil_edgeDirections.obj"
+
+Writing featureEdgeMesh to "/gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5/constant/triSurface/aerofoil.eMesh"
+Extracting curvature of surface at the points.
+Calculating vertex normals
+Calculating face curvature
+
+ExecutionTime = 0 s  ClockTime = 0 s
+
+End
+

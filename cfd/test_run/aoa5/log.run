@@ -1,0 +1,8 @@
+Running blockMesh on /gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5
+Running surfaceFeatureExtract on /gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5
+type            basic;
+Running snappyHexMesh on /gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5
+Running checkMesh on /gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5
+type            highAspectRatio;
+Running snappyHexMesh on /gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5
+Running checkMesh on /gpfs/data/gpfs0/aphan_group/ka_raceing_vdc/cfd/test_run/aoa5

@@ -1,0 +1,16 @@
+Bootstrap: docker
+From: python:3.12-slim
+
+%post
+    pip install --no-cache-dir numpy scipy matplotlib pandas
+    mkdir -p /sim/src
+
+%files
+    src/ /sim/src/
+
+%environment
+    export PYTHONPATH=/sim:$PYTHONPATH
+
+%runscript
+    cd /sim
+    exec python3 -c "$*"

@@ -1,0 +1,20 @@
+# Large files
+containers/*.sif
+containers/*.simg
+*.npy
+
+# Results (generated data)
+
+# Private (tire data, credentials)
+private/
+
+# Python cache__pycache__/
+*.pyc
+
+# Planning docs (personal notes)
+plan.md
+done
+echo
+fi
+lines=
+results/
