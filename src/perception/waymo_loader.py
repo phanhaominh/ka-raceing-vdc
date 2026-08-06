@@ -241,83 +241,100 @@ class WaymoPillarDataset(Dataset):
                 np.zeros((0,), dtype=np.int64))
 
     def _build_pillars(self, xyz, intensity):
-        """Vectorized pillarization.
+        """Vectorized pillarization (delegates to module-level build_pillars)."""
+        return build_pillars(xyz, intensity, self.max_pillars,
+                             self.max_points_per_pillar, self.grid_x,
+                             self.grid_y, self.grid_z, self.pillar_size)
 
-        Points are assigned to (gx, gy) cells on the xy grid, sorted by
-        ascending grid index ``gy * grid_w + gx`` and truncated to
-        ``max_pillars`` occupied pillars x ``max_points_per_pillar`` points.
-        Feature columns per point: (x, y, z, intensity, x_c, y_c, z_c, x_p, y_p).
-        """
-        x, y, z = xyz[:, 0], xyz[:, 1], xyz[:, 2]
-        x_min, y_min = self.grid_x[0], self.grid_y[0]
-        px, py = self.pillar_size
 
-        ok = ((x >= self.grid_x[0]) & (x < self.grid_x[1]) &
-              (y >= self.grid_y[0]) & (y < self.grid_y[1]) &
-              (z >= self.grid_z[0]) & (z < self.grid_z[1]))
-        x, y, z, intensity = x[ok], y[ok], z[ok], intensity[ok]
+def build_pillars(xyz, intensity, max_pillars=MAX_PILLARS,
+                  max_points_per_pillar=MAX_POINTS_PER_PILLAR,
+                  grid_x=GRID_X, grid_y=GRID_Y, grid_z=GRID_Z,
+                  pillar_size=PILLAR_SIZE):
+    """Vectorized pillarization of an (N, 3) point cloud + (N,) intensities.
 
-        out_pillars = np.zeros(
-            (self.max_pillars, self.max_points_per_pillar, 9),
-            dtype=np.float32)
-        out_indices = np.full((self.max_pillars, 2), -1, dtype=np.int32)
-        if len(x) == 0:
-            return out_pillars, out_indices, 0
+    Points are assigned to (gx, gy) cells on the xy grid, sorted by ascending
+    grid index ``gy * grid_w + gx`` and truncated to ``max_pillars`` occupied
+    pillars x ``max_points_per_pillar`` points.  Feature columns per point:
+    (x, y, z, intensity, x_c, y_c, z_c, x_p, y_p) where (x_c, y_c, z_c) is the
+    pillar centroid over all of the pillar's points and (x_p, y_p) the offset
+    of the point from the pillar center.
 
-        gx = np.clip(np.floor((x - x_min) / px).astype(np.int64),
-                     0, self.grid_w - 1)
-        gy = np.clip(np.floor((y - y_min) / py).astype(np.int64),
-                     0, self.grid_h - 1)
-        pid = gy * self.grid_w + gx
+    Returns ``(pillars, pillar_indices, n_occupied)`` with shapes
+    ``(max_pillars, max_points_per_pillar, 9)`` float32, ``(max_pillars, 2)``
+    int32 ((-1,-1) = empty slot) and the number of occupied pillars.
+    """
+    grid_w = int((grid_x[1] - grid_x[0]) / pillar_size[0])
+    grid_h = int((grid_y[1] - grid_y[0]) / pillar_size[1])
+    x, y, z = xyz[:, 0], xyz[:, 1], xyz[:, 2]
+    x_min, y_min = grid_x[0], grid_y[0]
+    px, py = pillar_size
 
-        order = np.argsort(pid, kind="stable")
-        pid = pid[order]
-        x, y, z, intensity = x[order], y[order], z[order], intensity[order]
+    ok = ((x >= grid_x[0]) & (x < grid_x[1]) &
+          (y >= grid_y[0]) & (y < grid_y[1]) &
+          (z >= grid_z[0]) & (z < grid_z[1]))
+    x, y, z, intensity = x[ok], y[ok], z[ok], intensity[ok]
 
-        # pillar id per point, counts, per-pillar starts, per-point rank
-        new_pillar = np.zeros(len(pid) + 1, dtype=bool)
-        new_pillar[0] = True
-        new_pillar[1:-1] = pid[1:] != pid[:-1]
-        pillar_idx = np.cumsum(new_pillar)[:-1] - 1
-        num_pillars = int(pillar_idx[-1]) + 1
-        counts = np.bincount(pillar_idx, minlength=num_pillars)
-        starts = np.searchsorted(pillar_idx, np.arange(num_pillars),
-                                 side="left")
-        rank = np.arange(len(pid)) - starts[pillar_idx]
+    out_pillars = np.zeros((max_pillars, max_points_per_pillar, 9),
+                           dtype=np.float32)
+    out_indices = np.full((max_pillars, 2), -1, dtype=np.int32)
+    if len(x) == 0:
+        return out_pillars, out_indices, 0
 
-        keep = rank < self.max_points_per_pillar
-        keep_pid = pillar_idx[keep]
-        P = min(num_pillars, self.max_pillars)
-        sel = keep_pid < P
-        kx = x[keep][sel]
-        ky = y[keep][sel]
-        kz = z[keep][sel]
-        ki = intensity[keep][sel]
-        kpid = keep_pid[sel]
-        krank = rank[keep][sel]
-        kgx = gx[keep][sel]
-        kgy = gy[keep][sel]
+    gx = np.clip(np.floor((x - x_min) / px).astype(np.int64),
+                 0, grid_w - 1)
+    gy = np.clip(np.floor((y - y_min) / py).astype(np.int64),
+                 0, grid_h - 1)
+    pid = gy * grid_w + gx
 
-        # pillar centroid over ALL points of the pillar (standard PointPillars)
-        sums = np.add.reduceat(np.stack([x, y, z], axis=1), starts)
-        centroids = sums / counts[:, None]              # (num_pillars, 3)
-        cx = centroids[kpid, 0]
-        cy = centroids[kpid, 1]
-        cz = centroids[kpid, 2]
+    order = np.argsort(pid, kind="stable")
+    pid = pid[order]
+    x, y, z, intensity = x[order], y[order], z[order], intensity[order]
 
-        # offset from pillar center
-        xp = kx - (x_min + (kgx.astype(np.float32) + 0.5) * px)
-        yp = ky - (y_min + (kgy.astype(np.float32) + 0.5) * py)
+    # pillar id per point, counts, per-pillar starts, per-point rank
+    new_pillar = np.zeros(len(pid) + 1, dtype=bool)
+    new_pillar[0] = True
+    new_pillar[1:-1] = pid[1:] != pid[:-1]
+    pillar_idx = np.cumsum(new_pillar)[:-1] - 1
+    num_pillars = int(pillar_idx[-1]) + 1
+    counts = np.bincount(pillar_idx, minlength=num_pillars)
+    starts = np.searchsorted(pillar_idx, np.arange(num_pillars),
+                             side="left")
+    rank = np.arange(len(pid)) - starts[pillar_idx]
 
-        feats = np.stack([kx, ky, kz, ki, cx, cy, cz, xp, yp], axis=1)
-        flat = out_pillars.reshape(-1, 9)
-        flat[kpid * self.max_points_per_pillar + krank] = feats
+    keep = rank < max_points_per_pillar
+    keep_pid = pillar_idx[keep]
+    P = min(num_pillars, max_pillars)
+    sel = keep_pid < P
+    kx = x[keep][sel]
+    ky = y[keep][sel]
+    kz = z[keep][sel]
+    ki = intensity[keep][sel]
+    kpid = keep_pid[sel]
+    krank = rank[keep][sel]
+    kgx = gx[keep][sel]
+    kgy = gy[keep][sel]
 
-        # grid (x, y) cell per pillar (same for all points of a pillar)
-        first = np.searchsorted(kpid, np.arange(P), side="left")
-        out_indices[:P, 0] = kgx[first]
-        out_indices[:P, 1] = kgy[first]
-        return out_pillars, out_indices, P
+    # pillar centroid over ALL points of the pillar (standard PointPillars)
+    sums = np.add.reduceat(np.stack([x, y, z], axis=1), starts)
+    centroids = sums / counts[:, None]              # (num_pillars, 3)
+    cx = centroids[kpid, 0]
+    cy = centroids[kpid, 1]
+    cz = centroids[kpid, 2]
+
+    # offset from pillar center
+    xp = kx - (x_min + (kgx.astype(np.float32) + 0.5) * px)
+    yp = ky - (y_min + (kgy.astype(np.float32) + 0.5) * py)
+
+    feats = np.stack([kx, ky, kz, ki, cx, cy, cz, xp, yp], axis=1)
+    flat = out_pillars.reshape(-1, 9)
+    flat[kpid * max_points_per_pillar + krank] = feats
+
+    # grid (x, y) cell per pillar (same for all points of a pillar)
+    first = np.searchsorted(kpid, np.arange(P), side="left")
+    out_indices[:P, 0] = kgx[first]
+    out_indices[:P, 1] = kgy[first]
+    return out_pillars, out_indices, P
 
 
 def pillar_counts(pillar_indices):

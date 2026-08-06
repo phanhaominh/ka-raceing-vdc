@@ -52,6 +52,9 @@ from src.perception.waymo_loader import (                     # noqa: E402
 )
 
 CLASS_NAMES = ["VEHICLE", "PEDESTRIAN", "CYCLIST"]
+# Number of classes for the cls target grid.  Default 3 (Waymo);
+# fine-tuning scripts override this (e.g. train_cones sets 4 cone classes).
+NUM_CLASSES = 3
 
 # Per-class anchor dims used to normalize regression targets.
 CLASS_ANCHORS = {
@@ -100,7 +103,7 @@ def build_targets(pillar_indices, boxes, labels, box_mask, fh, fw):
     px, py = PILLAR_SIZE
 
     B = pillar_indices.shape[0]
-    cls_t = torch.zeros(B, 3, fh, fw, device=pillar_indices.device)
+    cls_t = torch.zeros(B, NUM_CLASSES, fh, fw, device=pillar_indices.device)
     reg_t = torch.zeros(B, 7, fh, fw, device=pillar_indices.device)
     reg_m = torch.zeros(B, 1, fh, fw, device=pillar_indices.device)
 
