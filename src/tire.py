@@ -33,6 +33,7 @@ import numpy as np
 # --------------------------------------------------------------------------
 _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TIR_PATH = os.path.join(_PROJECT_ROOT, "models", "hoosier_r20.tir")
+RESULTS_DIR = os.path.join(_PROJECT_ROOT, "results", "validation")
 
 _coeffs = None  # lazy-loaded coefficient dict (see _load_coeffs)
 
