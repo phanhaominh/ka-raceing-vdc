@@ -21,7 +21,7 @@ Formula Student teams combine simulation, engineering experience, and track test
 |--------|-------|--------|
 | Latin Hypercube sweep | 50,000 physics simulations | Dominant sensitivity in yaw-control parameters; longitudinal VDC parameters showed limited effect in the current lateral-dynamics-focused autocross model |
 | Surrogate model ensemble | 1,100,000,000 virtual evaluations | yaw_gain ~1500 Nm/(rad/s), yaw_damping = 60 Nm/(rad/s²) |
-| Robustness sweep | 1,400,000 physics laps across 7 scenarios | Optimal calibration validated under grip/driver variation |
+| Robustness sweep | 1,230,000+ physics laps across 7 scenarios | Optimal calibration validated under grip/driver variation |
 
 ## Optimal VDC Calibration
 
@@ -162,3 +162,11 @@ Developed as an independent vehicle dynamics research project inspired by Formul
 ## Tire Data Attribution
 
 The Pacejka MF5.0 coefficients for the Hoosier 16.0×7.5-10 R20 tire were extracted from a publicly available `.tir` file published as part of a Bachelor's thesis at UPC Barcelona (Miret Pros, 2024). The coefficients are provided in `models/hoosier_r20.tir` for reproducibility.
+
+## Tire Data Attribution
+
+The Pacejka MF5.0 coefficients for the Hoosier 16.0×7.5-10 R20 tire were sourced from a publicly available `.tir` file published as part of a Bachelor's thesis:
+
+> Miret Pros, M. (2024). *Vehicle Model of a Formula Student Car*. Bachelor's Thesis, UPC Barcelona. [Available online](https://upcommons.upc.edu/server/api/core/bitstreams/212e694c-9d67-442b-944d-eee88d2b4f55/content)
+
+The coefficients are provided in `models/hoosier_r20.tir` for reproducibility.

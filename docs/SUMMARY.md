@@ -41,7 +41,7 @@ The initial surrogate model prediction of "max damping = best lap time" was an e
 ## Methodology Scale
 
 - 50,000 Latin Hypercube samples (Stage 1 sensitivity)
-- 1,400,000 robustness laps across 7 grip/driver scenarios (Stage 2)
+- 1,230,000+ robustness laps across 7 grip/driver scenarios (Stage 2)
 - 1,100,000,000 virtual surrogate evaluations
 - 792 CPU cores, ~6,300 core-hours
 - Executed on shared academic HPC infrastructure

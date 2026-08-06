@@ -53,7 +53,7 @@ Traction control, braking, and energy-management parameters showed limited influ
 Optimization pipeline:
 
 - 50,000 Latin Hypercube physics simulations (Stage 1)
-- 1,400,000 robustness simulations across 7 uncertainty scenarios (Stage 2)
+- 1,230,000+ robustness simulations across 7 uncertainty scenarios (Stage 2)
 - 1.1 billion surrogate model evaluations
 - Sobol sensitivity analysis with 5,000 bootstrap resamples
 - Gaussian Process with Automatic Relevance Detection
