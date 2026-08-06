@@ -76,3 +76,20 @@ python3 -m src.perception.train_numpy \
 
 - coneScenes Dataset: [Chalmers-Formula-Student/coneScenes](https://github.com/Chalmers-Formula-Student/coneScenes)
 - Waymo Open Dataset v1.3.0: 1.9TB, 798 TFRecords, 1.6M frames
+
+## coneScenes Fine-Tuning Results
+
+| Metric | Value |
+|--------|-------|
+| Frames | 63 (50 train / 13 val) |
+| Epochs | 50 |
+| Hardware | 4× NVIDIA V100-16GB |
+| Training time | 8 minutes |
+| Initial train loss | 3.18 |
+| Final train loss | 0.80 |
+| Final val loss | 0.76 |
+| Classes detected | Cone_Yellow (4410), Cone_Blue (4662) |
+| Backbone layers loaded | 16/18 (only cls_head re-initialized for 4 classes) |
+| Checkpoints | Every 10 epochs (5 files) |
+
+The Waymo-pretrained backbone transferred successfully to FSAE cones with minimal fine-tuning. The model distinguishes yellow and blue cones. Orange and Big cone classes are in the architecture but have no training samples in this dataset.
