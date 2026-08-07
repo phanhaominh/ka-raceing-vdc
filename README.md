@@ -20,7 +20,7 @@ Formula Student teams combine simulation, engineering experience, and track test
 | Method | Scale | Result |
 |--------|-------|--------|
 | Latin Hypercube sweep | 50,000 physics simulations | Dominant sensitivity in yaw-control parameters; longitudinal VDC parameters showed limited effect in the current lateral-dynamics-focused autocross model |
-| Surrogate model ensemble | 1,100,000,000 virtual evaluations | yaw_gain ~1500 Nm/(rad/s), yaw_damping = 60 Nm/(rad/s²) |
+| Surrogate model ensemble | 1,100,000,000 virtual evaluations | yaw_gain ~510 Nm/(rad/s), yaw_damping = 60 Nm/(rad/s²) |
 | Robustness sweep | 1,230,000+ physics laps across 7 scenarios | Optimal calibration validated under grip/driver variation |
 
 ## Optimal VDC Calibration
